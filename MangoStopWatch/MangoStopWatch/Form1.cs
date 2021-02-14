@@ -12,14 +12,22 @@ namespace MangoStopWatch
 {
     public partial class Form1 : Form
     {
+        private Timer mTimer;
+        private StopWatchManager mStopWatchManager;
+
         public Form1()
         {
             InitializeComponent();
-            initViews();
+            init();
         }
 
-        private void initViews()
+        private void init()
         {
+            mStopWatchManager = new StopWatchManager();
+            mTimer = new Timer();
+            mTimer.Interval = 50;
+            mTimer.Tick += new EventHandler(updateHandler);
+
             btn_start.Text = CommonConstants.BUTTON_NAME_START;
         }
 
@@ -28,19 +36,27 @@ namespace MangoStopWatch
             if(btn_start.Text == CommonConstants.BUTTON_NAME_START)
             {
                 btn_start.Text = CommonConstants.BUTTON_NAME_STOP;
-                lbl_watch_display.Text = CommonConstants.BUTTON_NAME_STOP;
+                mTimer.Start();
+                mStopWatchManager.start();
             }
             else
             {
                 btn_start.Text = CommonConstants.BUTTON_NAME_START;
-                lbl_watch_display.Text = CommonConstants.BUTTON_NAME_START;
+                mTimer.Stop();
+                mStopWatchManager.stop();
             }
 
         }
 
         private void btn_reset_Click(object sender, EventArgs e)
         {
+            mTimer.Stop();
+            mStopWatchManager.reset();
+        }
 
+        private void updateHandler(object sender, EventArgs e)
+        {
+            lbl_watch_display.Text = mStopWatchManager.getText();
         }
     }
 }
